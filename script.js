@@ -56,6 +56,7 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
+// Display all transactions on the page
 const displayMovements = function (movements) {
   containerMovements.innerHTML = "";
   movements.forEach(function (mov, i) {
@@ -72,11 +73,13 @@ const displayMovements = function (movements) {
   });
 };
 
+// Total balance of all transactions
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
   labelBalance.textContent = `${acc.balance}€`;
 };
 
+// Calculate incomes, outcomes and the interest owed to the bank
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter((mov) => mov > 0)
@@ -97,7 +100,7 @@ const calcDisplaySummary = function (acc) {
     .reduce((acc, int) => acc + int, 0);
   labelSumInterest.textContent = `${interest}€`;
 };
-
+// Create usernames for users to log in
 const createUsernames = function (accs) {
   accs.forEach(function (acc) {
     acc.username = acc.owner
@@ -138,6 +141,7 @@ btnLogin.addEventListener("click", function (e) {
   }
 });
 
+// Transfer money between accounts
 btnTransfer.addEventListener("click", function (e) {
   e.preventDefault();
   const amount = Number(inputTransferAmount.value);
@@ -157,6 +161,23 @@ btnTransfer.addEventListener("click", function (e) {
     inputTransferAmount.value = inputTransferTo.value = "";
   }
 });
+
+// Granted if deposit is greater than 10% of loan
+btnLoan.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (
+    amount > 0 &&
+    currentAccount.movements.some((mov) => mov >= amount / 10)
+  ) {
+    currentAccount.movements.push(amount);
+    updateUI(currentAccount);
+  }
+});
+
+// Close Account
 btnClose.addEventListener("click", function (e) {
   e.preventDefault();
   if (
